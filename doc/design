@@ -1,0 +1,66 @@
+project
+
+- the purpose is to create a client-server application capable of
+allowing to each team member to evaluate others.
+- the system allows to distribute a max number N of points (for example, 100)
+to an M number of teammates
+- each team member (client) is not allowed to know what others have voted
+- the one and only one server is the only one allowed to see the partial/final data
+
+-----------------------------------------------------------------
+client specification
+-----------------------------------------------------------------
+
+A client
+- is allowed to connect to a specified server via tcp/ip connection, 
+- can connect to a server with:
+  client --host=<ip> --port=<port> --user=<userid> --password=<password>
+-- if the connection doesn't succeed, an error should be returned
+-- if everything went fine, a new window should appear
+- can execute one of the following operations:
+-- the number N (number of points left) is always visible (should be retrieved 
+from the server automatically after a successful login)
+-- is allowed to see the list of current members and how he/she assigned each point
+-- is allowed to add K points to a teammate iff 0<K<=N
+-- is allowed to remove points from a teammate
+
+nice to have:
+- give the possibility to change password
+- add a TUI
+
+
+-----------------------------------------------------------------
+server specification
+-----------------------------------------------------------------
+A server
+- holds an xml configuration of the team structure:
+    <configuration>
+      <team name="team name">
+        <maxpoints value="100"/>
+        <member id="<unique id>" role="leader|mate" name="Luca" surname="Stoppa"/>
+      </team>
+    </configuration>
+- during starup the server must
+-- check whether another instance is already running
+-- load the xml configuration file
+-- validate that there are no empty fields and each id is unique
+-- that there's only one member with role="leader"
+-- read a binary file with the information related to each member.
+-- start listening for incoming connections
+
+---------------
+file structure
+---------------
+
+----------------------
+communication protocol
+----------------------
+everything is based on async io. The protocol is very simple:
+- # of bytes
+- xml file where we have a command and an optional list of parameters. 
+For example, let's suppose user "id12345" wants to give "10" points to user "id222222".
+  83 (bytes) 
+  followed by 
+  <command type="add_points_to" from="id12345" to="id222222" points="10"/>
+
+
