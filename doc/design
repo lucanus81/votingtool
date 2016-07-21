@@ -1,4 +1,4 @@
-project
+Project (Initial Design)
 
 - the purpose is to create a client-server application capable of
 allowing to each team member to evaluate others.
@@ -51,6 +51,7 @@ A server
 ---------------
 file structure
 ---------------
+describe the file used to store the server's internal data.
 
 ----------------------
 communication protocol
@@ -59,8 +60,17 @@ everything is based on async io. The protocol is very simple:
 - # of bytes
 - xml file where we have a command and an optional list of parameters. 
 For example, let's suppose user "id12345" wants to give "10" points to user "id222222".
-  83 (bytes) 
+  93 (bytes) 
   followed by 
-  <command type="add_points_to" from="id12345" to="id222222" points="10"/>
+  <command id="12345" type="add_points_to" from="id12345" to="id222222" points="10"/>
+- once the server executed a command, we should receive a simple ACK message:
+  # of bytes, and, for example
+  <command id="12345" status="ok"/>
 
+Enhancement:
+it would be interesting to add encryption. The protocol is pretty simple:
+- the server must generate -once per all- a public key and a private key
+- the client must do the same
+- during login process client and server will exchange each public key
+- public key is used to encrypt each message
 
