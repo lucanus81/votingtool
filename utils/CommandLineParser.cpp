@@ -1,6 +1,5 @@
 #include "CommandLineParser.h"
 
-bool cmdline_parser::parse(const std::string& line)
+cmdline_parser::cmdline_parser(int argc, char** argv)
 {
-    return true;
 }

@@ -2,8 +2,6 @@
 
 int main(int argc, char** argv)
 {
-    cmdline_parser parser;
-    if (!parser.parse("test"))
-        return -1;
+    cmdline_parser parser{argc, argv};
     return 0;
 }
