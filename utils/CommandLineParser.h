@@ -23,7 +23,6 @@ private:
     bool is_cmd_help(boost::program_options::variables_map const& vm) const;
     bool all_options_available(boost::program_options::variables_map const& vm) const;
 
-
     struct cmdline_options 
     {
         enum class options { help, hostname, port, username, password };

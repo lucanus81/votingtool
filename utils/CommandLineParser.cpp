@@ -46,10 +46,17 @@ bool cmdline_parser::all_options_available(boost::program_options::variables_map
         });
 }
 
-
+/*
+ * @note: we show the help when
+ * - we select the --help option, or
+ * - we do not select any option (empty command line), or
+ * - when we have an invalid combination of options.
+ */
 bool cmdline_parser::is_cmd_help(boost::program_options::variables_map const& vm) const
 {
-    return 1 == vm.count(cmdline_options::to_string(cmdline_options::options::help)) && !all_options_available(vm);
+    return 0 == vm.size() || 
+        1 == vm.count(cmdline_options::to_string(cmdline_options::options::help)) ||
+        !all_options_available(vm);
 }
 
 std::string cmdline_parser::cmd_line() const
