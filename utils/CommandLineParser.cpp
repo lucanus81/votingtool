@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <exception>
 
 cmdline_parser::cmdline_parser(int argc, char** argv)
 {
@@ -25,13 +26,19 @@ cmdline_parser::cmdline_parser(int argc, char** argv)
             "Password - case sensitive");
 
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, help_), vm);
-    po::notify(vm);
+    try 
+    {
+        po::store(po::parse_command_line(argc, argv, help_), vm);
+        po::notify(vm);
+    }
+    catch (const po::error& ex)
+    {
+        std::cerr <<"Error: " <<ex.what() <<"\n";
+        parsing_status_ = status::error;
+    }
     
-    help_required_ = is_cmd_help(vm);
-    if (!help_required_ && !all_options_available(vm))
-        //throw invalid_command_line_exception("error");
-        std::cout <<"error" <<std::endl;
+    if (what() != status::error)
+        parsing_status_ = is_cmd_help(vm) ? status::help : status::ok;
 }
 
 bool cmdline_parser::all_options_available(boost::program_options::variables_map const& vm) const

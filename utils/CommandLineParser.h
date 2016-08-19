@@ -6,6 +6,8 @@
 
 struct cmdline_parser 
 {
+    enum class status { ok, help, error, uninitialized };
+
     cmdline_parser(const cmdline_parser&) = delete;
     cmdline_parser(cmdline_parser&& ) = delete;
     cmdline_parser& operator=(const cmdline_parser&) = delete;
@@ -14,11 +16,11 @@ struct cmdline_parser
 
     cmdline_parser(int argc, char** argv);
     std::string cmd_line() const;
-    bool is_cmd_help() const { return help_required_; }
+    status what() const { return parsing_status_; }
 
 private:
     boost::program_options::options_description help_{"Allowed options"};
-    bool help_required_{ false };
+    status parsing_status_{status::uninitialized};
 
     bool is_cmd_help(boost::program_options::variables_map const& vm) const;
     bool all_options_available(boost::program_options::variables_map const& vm) const;
