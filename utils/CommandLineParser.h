@@ -3,6 +3,7 @@
 
 #include "boost/program_options.hpp"
 #include <array>
+#include <tuple>
 
 struct cmdline_parser 
 {
@@ -24,16 +25,6 @@ private:
 
     bool is_cmd_help(boost::program_options::variables_map const& vm) const;
     bool all_options_available(boost::program_options::variables_map const& vm) const;
-
-    struct cmdline_options 
-    {
-        enum class options { help, hostname, port, username, password };
-
-        static std::string to_string(cmdline_options::options op) {
-            static const std::array<std::string, 5> option_names{ "help", "hostname", "port", "username", "password" };
-            return option_names[static_cast<std::size_t>(op)];
-        }
-    };
 };
 
 #endif
