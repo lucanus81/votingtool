@@ -16,5 +16,11 @@ int main(int argc, char** argv)
             break;
     }
 
+    std::cout
+        <<"Hostname: " <<parser.hostname() <<"\n"
+        <<"    Port: " <<parser.port() <<"\n" 
+        <<"Username: " <<parser.username() <<"\n"
+        <<"Password: " <<parser.password() <<"\n";
+
     return 0;
 }

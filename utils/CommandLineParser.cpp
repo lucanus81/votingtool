@@ -1,5 +1,6 @@
 #include "CommandLineParser.h"
 #include "Printer.h"
+#include "Validator.h"
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -33,6 +34,16 @@ arguments extract_arguments(boost::program_options::variables_map const& vm)
         vm[cmdline_options::to_string(cmdline_options::options::password)].as<std::string>());
 }
 
+template <typename V>
+void validate_or_throw(V&& validator) 
+{
+    if (!validator.validate())
+    {
+        std::cout <<validator.why() <<std::endl;
+        throw int{-2};
+    }
+}
+
 }
 
 cmdline_parser::cmdline_parser(int argc, char** argv)
@@ -64,21 +75,26 @@ cmdline_parser::cmdline_parser(int argc, char** argv)
     catch (const po::error& ex)
     {
         std::cerr <<"Error: " <<ex.what() <<"\n";
-        parsing_status_ = status::error;
+        set_status(status::error);
     }
     
     if (what() == status::error)
         throw int{-1};
 
-    parsing_status_ = is_cmd_help(vm) ? status::help : status::ok;
-    if (parsing_status_ == status::help)
+    set_status(is_cmd_help(vm) ? status::help : status::ok);
+    if (what() == status::help)
         return;
     
     auto res = extract_arguments(vm);
-    std::cout <<"{" <<res <<"}\n";
     
-    //if (!validate_arguments(res))
-    //    throw int{-2};
+    // TODO: move into a method
+    hostname_validator hv{ std::get<0>(res) };
+    validate_or_throw(std::move(hv));
+
+    port_validator pv{ std::get<1>(res) };
+    validate_or_throw(std::move(pv));
+    
+    std::tie(hostname_, port_, username_, password_) = std::move(res);
 }
 
 bool cmdline_parser::all_options_available(boost::program_options::variables_map const& vm) const

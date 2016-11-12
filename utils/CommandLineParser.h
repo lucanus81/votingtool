@@ -19,12 +19,23 @@ struct cmdline_parser
     std::string cmd_line() const;
     status what() const { return parsing_status_; }
 
+    std::string hostname() const { return hostname_; }
+    uint16_t port() const { return port_; }
+    std::string username() const { return username_; }
+    std::string password() const { return password_; }
+
 private:
     boost::program_options::options_description help_{"Allowed options"};
     status parsing_status_{status::uninitialized};
 
     bool is_cmd_help(boost::program_options::variables_map const& vm) const;
     bool all_options_available(boost::program_options::variables_map const& vm) const;
+    void set_status(const cmdline_parser::status status) { parsing_status_ = status; }
+
+    std::string hostname_;
+    uint16_t port_{0};
+    std::string username_;
+    std::string password_;
 };
 
 #endif
